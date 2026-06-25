@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.1] - 2026-06-25
+
+### Added
+- SVG favicon with hacker terminal chart design
+- Dynamic base URL derived from the request host for canonical and Open Graph URLs
+- SEO meta tags, JSON-LD schema, llms.txt, sitemap.xml, and robots.txt
+
+### Changed
+- ETag and Cache-Control headers for embedded static files
+- Docker Compose project name and dedicated host port
+
+### Fixed
+- Removed misleading live interval stat from the landing page
+- API and SSE responses now send Cache-Control: no-store, and conditional requests parse If-None-Match per RFC 7232
+
 ## [1.1.0] - 2026-04-29
 
 ### Added
