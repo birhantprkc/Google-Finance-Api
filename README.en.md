@@ -36,6 +36,8 @@ PORT=3000 ./google-finance-api
 docker compose up -d
 ```
 
+The Compose stack is reachable on host port `8190` (container port `8080`): `http://localhost:8190`
+
 Logs and shutdown:
 
 ```bash
@@ -45,13 +47,13 @@ docker compose down
 
 ## Ticker Format
 
-| Type   | Format           | Example          |
-|--------|------------------|------------------|
-| Stock  | SYMBOL:EXCHANGE  | GOOGL:NASDAQ     |
-| Index  | .SYMBOL:EXCHANGE | .DJI:INDEXDJX    |
-| Crypto | BASE-QUOTE       | BTC-USD          |
-| Forex  | BASE-QUOTE       | EUR-USD          |
-| ETF    | SYMBOL:EXCHANGE  | SPY:NYSEARCA     |
+| Type   | Format           | Example       |
+|--------|------------------|---------------|
+| Stock  | SYMBOL:EXCHANGE  | GOOGL:NASDAQ  |
+| Index  | .SYMBOL:EXCHANGE | .DJI:INDEXDJX |
+| Crypto | BASE-QUOTE       | BTC-USD       |
+| Forex  | BASE-QUOTE       | EUR-USD       |
+| ETF    | SYMBOL:EXCHANGE  | SPY:NYSEARCA  |
 
 ## API Endpoints
 

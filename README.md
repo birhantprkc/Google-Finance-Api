@@ -36,6 +36,8 @@ PORT=3000 ./google-finance-api
 docker compose up -d
 ```
 
+Compose yığını host portu `8190` üzerinden erişilir (konteyner içi `8080`): `http://localhost:8190`
+
 Durdurma ve loglar:
 
 ```bash
@@ -45,13 +47,13 @@ docker compose down
 
 ## Ticker Formatı
 
-| Tür     | Format        | Örnek            |
-|---------|---------------|------------------|
-| Hisse   | SEMBOL:BORSA  | THYAO:IST        |
-| Endeks  | .SEMBOL:BORSA | .DJI:INDEXDJX    |
-| Kripto  | BAZ-KARŞI     | BTC-USD          |
-| Döviz   | BAZ-KARŞI     | EUR-USD          |
-| ETF     | SEMBOL:BORSA  | SPY:NYSEARCA     |
+| Tür    | Format        | Örnek         |
+|--------|---------------|---------------|
+| Hisse  | SEMBOL:BORSA  | THYAO:IST     |
+| Endeks | .SEMBOL:BORSA | .DJI:INDEXDJX |
+| Kripto | BAZ-KARŞI     | BTC-USD       |
+| Döviz  | BAZ-KARŞI     | EUR-USD       |
+| ETF    | SEMBOL:BORSA  | SPY:NYSEARCA  |
 
 ## API Endpoint'leri
 
