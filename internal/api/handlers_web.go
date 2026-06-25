@@ -7,12 +7,32 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"strings"
 )
 
 const baseURLPlaceholder = "https://finance.hermestech.uk"
 
 func contentETag(data []byte) string {
 	return fmt.Sprintf(`"%x"`, sha256.Sum256(data))
+}
+
+// matchETag reports whether the If-None-Match header matches etag per RFC 7232.
+// It parses the comma-separated list, honors the "*" wildcard, and compares
+// using weak comparison (ignoring any W/ prefix on either side).
+func matchETag(ifNoneMatch, etag string) bool {
+	if ifNoneMatch == "" {
+		return false
+	}
+	if strings.TrimSpace(ifNoneMatch) == "*" {
+		return true
+	}
+	candidate := strings.TrimPrefix(etag, "W/")
+	for _, tag := range strings.Split(ifNoneMatch, ",") {
+		if strings.TrimPrefix(strings.TrimSpace(tag), "W/") == candidate {
+			return true
+		}
+	}
+	return false
 }
 
 func webHandler(content fs.FS) http.HandlerFunc {
@@ -36,8 +56,11 @@ func webHandler(content fs.FS) http.HandlerFunc {
 		w.Header().Set("ETag", etag)
 		w.Header().Set("Link", `</openapi.json>; rel="describedby"; type="application/json"`)
 
-		if r.Header.Get("If-None-Match") == etag {
+		if matchETag(r.Header.Get("If-None-Match"), etag) {
 			w.WriteHeader(http.StatusNotModified)
+			return
+		}
+		if r.Method == http.MethodHead {
 			return
 		}
 		w.Write(data)
@@ -58,8 +81,11 @@ func staticFileHandler(content fs.FS, filename, contentType, cacheControl string
 		w.Header().Set("Cache-Control", cacheControl)
 		w.Header().Set("ETag", etag)
 
-		if r.Header.Get("If-None-Match") == etag {
+		if matchETag(r.Header.Get("If-None-Match"), etag) {
 			w.WriteHeader(http.StatusNotModified)
+			return
+		}
+		if r.Method == http.MethodHead {
 			return
 		}
 		w.Write(data)
@@ -76,8 +102,11 @@ func openAPIHandler(content fs.FS) http.HandlerFunc {
 		w.Header().Set("ETag", etag)
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		if r.Header.Get("If-None-Match") == etag {
+		if matchETag(r.Header.Get("If-None-Match"), etag) {
 			w.WriteHeader(http.StatusNotModified)
+			return
+		}
+		if r.Method == http.MethodHead {
 			return
 		}
 		w.Write(data)

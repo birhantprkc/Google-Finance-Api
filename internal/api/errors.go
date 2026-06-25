@@ -13,6 +13,8 @@ type errorResponse struct {
 
 func writeJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	// Dynamic API responses carry live financial data; never cache them.
+	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(data); err != nil {
 		log.Printf("json encode error: %v", err)
