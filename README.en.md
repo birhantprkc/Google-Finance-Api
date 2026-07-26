@@ -66,8 +66,13 @@ GET /v1/chart/{ticker}?range=1M
 GET /v1/news/{ticker}
 GET /v1/financials/{ticker}?type=quarterly
 GET /v1/related/{ticker}
+GET /v1/classification/{ticker}
+GET /v1/analyst/{ticker}
+GET /v1/context/{ticker}
 GET /v1/full/{ticker}?range=1M
 ```
+
+`/v1/classification` returns descriptive labels (e.g. Most active, Stock, US listed security). `/v1/analyst` returns curated news and analysis articles. `/v1/context` returns the same instrument listed across different exchanges.
 
 ### Market
 

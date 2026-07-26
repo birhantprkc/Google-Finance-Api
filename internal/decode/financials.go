@@ -83,7 +83,7 @@ func decodeFinancialData(d []any, isAnnual bool) models.FinancialPeriod {
 	}
 	if len(d) > 17 {
 		dateArr := atSlice(d, 17)
-		if dateArr != nil && len(dateArr) >= 3 {
+		if len(dateArr) >= 3 {
 			y := int(atFloat(dateArr, 0))
 			m := int(atFloat(dateArr, 1))
 			dd := int(atFloat(dateArr, 2))

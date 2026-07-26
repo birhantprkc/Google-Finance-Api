@@ -14,7 +14,6 @@ const (
 	MethodMarketMovers   = "YtbmEe"
 	MethodTrending       = "lvVhof"
 	MethodEarnings       = "JFUMjd"
-	MethodCategoryStocks = "XqaYg"
 	MethodTopHeadline    = "QKZUzd"
 )
 
@@ -46,6 +45,18 @@ func RelatedRequest(tuple []any) RPCRequest {
 	return RPCRequest{ID: MethodRelated, Params: []any{tuple, 18}}
 }
 
+func ClassificationRequest(tuple []any) RPCRequest {
+	return RPCRequest{ID: MethodClassification, Params: []any{[]any{tuple}}}
+}
+
+func AnalystRequest(tuple []any) RPCRequest {
+	return RPCRequest{ID: MethodAnalyst, Params: []any{tuple}}
+}
+
+func StockContextRequest(symbol string) RPCRequest {
+	return RPCRequest{ID: MethodStockContext, Params: []any{symbol}}
+}
+
 func MarketIndicesRequest() RPCRequest {
 	return RPCRequest{ID: MethodMarketIndices, Params: []any{nil, 1}}
 }
@@ -64,8 +75,4 @@ func EarningsRequest() RPCRequest {
 
 func TopHeadlineRequest() RPCRequest {
 	return RPCRequest{ID: MethodTopHeadline, Params: []any{1}}
-}
-
-func CategoryStocksRequest(category string, offset int) RPCRequest {
-	return RPCRequest{ID: MethodCategoryStocks, Params: []any{category, offset}}
 }

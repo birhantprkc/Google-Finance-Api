@@ -30,6 +30,9 @@ func NewServer(ctx context.Context, client *gfrpc.Client, port string, webFS fs.
 	mux.HandleFunc("GET /v1/news/{ticker}", h.getNews)
 	mux.HandleFunc("GET /v1/financials/{ticker}", h.getFinancials)
 	mux.HandleFunc("GET /v1/related/{ticker}", h.getRelated)
+	mux.HandleFunc("GET /v1/classification/{ticker}", h.getClassification)
+	mux.HandleFunc("GET /v1/analyst/{ticker}", h.getAnalyst)
+	mux.HandleFunc("GET /v1/context/{ticker}", h.getContext)
 	mux.HandleFunc("GET /v1/full/{ticker}", h.getFull)
 
 	mux.HandleFunc("GET /v1/market/indices", h.getMarketIndices)

@@ -37,3 +37,12 @@ func TickerTuple(ticker string) []any {
 func IsCrypto(ticker string) bool {
 	return strings.Contains(ticker, "-") && !strings.Contains(ticker, ":")
 }
+
+// TickerSymbol returns the base symbol of a ticker, dropping the exchange or
+// quote-currency suffix (e.g. "AAPL:NASDAQ" -> "AAPL", "BTC-USD" -> "BTC").
+func TickerSymbol(ticker string) string {
+	if i := strings.IndexAny(ticker, ":-"); i >= 0 {
+		return ticker[:i]
+	}
+	return ticker
+}

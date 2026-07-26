@@ -100,6 +100,10 @@ func (h *handlers) getChart(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "ticker is required")
 		return
 	}
+	if err := gfrpc.ValidateTicker(ticker); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid ticker: "+err.Error())
+		return
+	}
 
 	rangeStr := r.URL.Query().Get("range")
 	if rangeStr == "" {
@@ -250,10 +254,119 @@ func (h *handlers) getRelated(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, stocks)
 }
 
+func (h *handlers) getClassification(w http.ResponseWriter, r *http.Request) {
+	ticker := r.PathValue("ticker")
+	if ticker == "" {
+		writeError(w, http.StatusBadRequest, "ticker is required")
+		return
+	}
+	if err := gfrpc.ValidateTicker(ticker); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid ticker: "+err.Error())
+		return
+	}
+
+	tuple := gfrpc.TickerTuple(ticker)
+	results, err := h.client.FetchTicker(r.Context(), ticker, []gfrpc.RPCRequest{
+		gfrpc.ClassificationRequest(tuple),
+	})
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+
+	raw, ok := results[gfrpc.MethodClassification]
+	if !ok {
+		writeError(w, http.StatusNotFound, "no classification data")
+		return
+	}
+
+	labels, err := decode.Classification(raw)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeJSON(w, http.StatusOK, labels)
+}
+
+func (h *handlers) getAnalyst(w http.ResponseWriter, r *http.Request) {
+	ticker := r.PathValue("ticker")
+	if ticker == "" {
+		writeError(w, http.StatusBadRequest, "ticker is required")
+		return
+	}
+	if err := gfrpc.ValidateTicker(ticker); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid ticker: "+err.Error())
+		return
+	}
+
+	tuple := gfrpc.TickerTuple(ticker)
+	results, err := h.client.FetchTicker(r.Context(), ticker, []gfrpc.RPCRequest{
+		gfrpc.AnalystRequest(tuple),
+	})
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+
+	raw, ok := results[gfrpc.MethodAnalyst]
+	if !ok {
+		writeError(w, http.StatusNotFound, "no analyst data")
+		return
+	}
+
+	news, err := decode.Analyst(raw)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeJSON(w, http.StatusOK, news)
+}
+
+func (h *handlers) getContext(w http.ResponseWriter, r *http.Request) {
+	ticker := r.PathValue("ticker")
+	if ticker == "" {
+		writeError(w, http.StatusBadRequest, "ticker is required")
+		return
+	}
+	if err := gfrpc.ValidateTicker(ticker); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid ticker: "+err.Error())
+		return
+	}
+
+	symbol := gfrpc.TickerSymbol(ticker)
+	results, err := h.client.FetchTicker(r.Context(), ticker, []gfrpc.RPCRequest{
+		gfrpc.StockContextRequest(symbol),
+	})
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+
+	raw, ok := results[gfrpc.MethodStockContext]
+	if !ok {
+		writeError(w, http.StatusNotFound, "no context data")
+		return
+	}
+
+	listings, err := decode.StockContext(raw)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeJSON(w, http.StatusOK, listings)
+}
+
 func (h *handlers) getFull(w http.ResponseWriter, r *http.Request) {
 	ticker := r.PathValue("ticker")
 	if ticker == "" {
 		writeError(w, http.StatusBadRequest, "ticker is required")
+		return
+	}
+	if err := gfrpc.ValidateTicker(ticker); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid ticker: "+err.Error())
 		return
 	}
 

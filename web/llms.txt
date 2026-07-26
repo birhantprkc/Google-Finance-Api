@@ -10,6 +10,9 @@
 - GET /v1/news/{ticker} — Latest news articles
 - GET /v1/financials/{ticker}?type=quarterly|annual — Revenue, EPS, P/E ratios
 - GET /v1/related/{ticker} — Related stocks
+- GET /v1/classification/{ticker} — Descriptive classification labels
+- GET /v1/analyst/{ticker} — Curated news and analysis articles
+- GET /v1/context/{ticker} — Cross-exchange listings of the symbol
 - GET /v1/full/{ticker} — Combined quote+company+chart+news
 - GET /v1/market/indices — Global market indices
 - GET /v1/market/movers?category=most-active|gainers|losers — Top movers

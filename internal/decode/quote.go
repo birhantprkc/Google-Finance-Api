@@ -62,7 +62,7 @@ func Quote(raw json.RawMessage) (*models.Quote, error) {
 	}
 
 	afterHoursArr := atSlice(root, 16)
-	if afterHoursArr != nil && len(afterHoursArr) > 0 {
+	if len(afterHoursArr) > 0 {
 		q.AfterHours = &models.AfterHours{
 			Price:         atFloat(afterHoursArr, 0),
 			Change:        atFloat(afterHoursArr, 1),

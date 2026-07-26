@@ -66,8 +66,13 @@ GET /v1/chart/{ticker}?range=1M
 GET /v1/news/{ticker}
 GET /v1/financials/{ticker}?type=quarterly
 GET /v1/related/{ticker}
+GET /v1/classification/{ticker}
+GET /v1/analyst/{ticker}
+GET /v1/context/{ticker}
 GET /v1/full/{ticker}?range=1M
 ```
+
+`/v1/classification` sınıflandırma etiketlerini (örn. Most active, Stock, US listed security) döndürür. `/v1/analyst` seçilmiş haber ve analiz makalelerini döndürür. `/v1/context` aynı enstrümanın farklı borsalardaki listelemelerini döndürür.
 
 ### Piyasa
 

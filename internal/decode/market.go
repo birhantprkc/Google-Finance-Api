@@ -101,14 +101,14 @@ func Earnings(raw json.RawMessage) ([]models.EarningsEvent, error) {
 		}
 
 		tickerArr := atSlice(a, 1)
-		if tickerArr != nil && len(tickerArr) >= 2 {
+		if len(tickerArr) >= 2 {
 			ev.Ticker = atString(tickerArr, 0)
 			ev.Exchange = atString(tickerArr, 1)
 		}
 
 		if len(a) > 4 {
 			dateInfo := atSlice(a, 4)
-			if dateInfo != nil && len(dateInfo) >= 2 {
+			if len(dateInfo) >= 2 {
 				year := int(atFloat(dateInfo, 0))
 				quarter := int(atFloat(dateInfo, 1))
 				ev.Date = fmt.Sprintf("%d-Q%d", year, quarter)
@@ -161,7 +161,7 @@ func Related(raw json.RawMessage) ([]models.RelatedStock, error) {
 }
 
 type marketItem struct {
-	ticker, name                   string
+	ticker, name                 string
 	price, change, changePercent float64
 }
 
@@ -171,7 +171,7 @@ func extractMarketItem(a []any) marketItem {
 	}
 
 	tickerArr := atSlice(a, 1)
-	if tickerArr != nil && len(tickerArr) >= 2 {
+	if len(tickerArr) >= 2 {
 		mi.ticker = atString(tickerArr, 0) + ":" + atString(tickerArr, 1)
 	}
 

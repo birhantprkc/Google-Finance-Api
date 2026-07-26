@@ -119,3 +119,18 @@ type FullQuote struct {
 	Chart   *ChartData   `json:"chart,omitempty"`
 	News    []NewsItem   `json:"news,omitempty"`
 }
+
+type ClassificationLabel struct {
+	Label       string `json:"label"`
+	Description string `json:"description,omitempty"`
+}
+
+type CrossListing struct {
+	Ticker        string  `json:"ticker"`
+	Exchange      string  `json:"exchange,omitempty"`
+	Name          string  `json:"name"`
+	Price         float64 `json:"price"`
+	Change        float64 `json:"change"`
+	ChangePercent float64 `json:"changePercent"`
+	Currency      string  `json:"currency,omitempty"`
+}

@@ -12,12 +12,12 @@
   <link rel="describedby" href="/openapi.json" type="application/json">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Google Finance API — Free Real-Time Market Data">
-  <meta property="og:description" content="Unofficial REST API wrapping Google Finance. 13 endpoints, SSE live streaming, zero API key. Open source.">
+  <meta property="og:description" content="Unofficial REST API wrapping Google Finance. 16 endpoints, SSE live streaming, zero API key. Open source.">
   <meta property="og:url" content="https://finance.hermestech.uk">
   <meta property="og:site_name" content="Google Finance API">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Google Finance API — Free Real-Time Market Data">
-  <meta name="twitter:description" content="Unofficial REST API wrapping Google Finance. 13 endpoints, SSE live streaming, zero API key.">
+  <meta name="twitter:description" content="Unofficial REST API wrapping Google Finance. 16 endpoints, SSE live streaming, zero API key.">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -616,11 +616,11 @@
       </div>
       <div class="stat-row">
         <div class="stat-box">
-          <div class="stat-val">13</div>
+          <div class="stat-val">16</div>
           <div class="stat-label">ENDPOINTS</div>
         </div>
         <div class="stat-box">
-          <div class="stat-val">19</div>
+          <div class="stat-val">14</div>
           <div class="stat-label">RPC METHODS</div>
         </div>
       </div>
@@ -672,6 +672,24 @@
             <td class="method">GET</td>
             <td class="ep-path">/v1/related/{ticker}</td>
             <td class="ep-desc">Related stocks</td>
+            <td><span class="tag">TICKER</span></td>
+          </tr>
+          <tr>
+            <td class="method">GET</td>
+            <td class="ep-path">/v1/classification/{ticker}</td>
+            <td class="ep-desc">Descriptive classification labels</td>
+            <td><span class="tag">TICKER</span></td>
+          </tr>
+          <tr>
+            <td class="method">GET</td>
+            <td class="ep-path">/v1/analyst/{ticker}</td>
+            <td class="ep-desc">Curated news and analysis articles</td>
+            <td><span class="tag">TICKER</span></td>
+          </tr>
+          <tr>
+            <td class="method">GET</td>
+            <td class="ep-path">/v1/context/{ticker}</td>
+            <td class="ep-desc">Cross-exchange listings of the symbol</td>
             <td><span class="tag">TICKER</span></td>
           </tr>
           <tr>
@@ -735,6 +753,9 @@
           <button data-path="/v1/chart/MSFT:NASDAQ?range=1M">chart</button>
           <button data-path="/v1/news/TSLA:NASDAQ">news</button>
           <button data-path="/v1/financials/GOOGL:NASDAQ?type=annual">financials</button>
+          <button data-path="/v1/classification/AAPL:NASDAQ">classification</button>
+          <button data-path="/v1/analyst/AAPL:NASDAQ">analyst</button>
+          <button data-path="/v1/context/AAPL:NASDAQ">context</button>
           <button data-path="/v1/market/indices">indices</button>
           <button data-path="/v1/market/trending">trending</button>
         </div>
