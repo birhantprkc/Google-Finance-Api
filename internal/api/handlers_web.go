@@ -38,7 +38,7 @@ func matchETag(ifNoneMatch, etag string) bool {
 		return true
 	}
 	candidate := strings.TrimPrefix(etag, "W/")
-	for _, tag := range strings.Split(ifNoneMatch, ",") {
+	for tag := range strings.SplitSeq(ifNoneMatch, ",") {
 		if strings.TrimPrefix(strings.TrimSpace(tag), "W/") == candidate {
 			return true
 		}
