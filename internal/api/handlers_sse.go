@@ -168,7 +168,9 @@ func (h *handlers) liveStream(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return
 		}
-		fmt.Fprintf(w, "data: %s\n\n", data)
+		if _, err := fmt.Fprintf(w, "data: %s\n\n", data); err != nil {
+			return
+		}
 		flusher.Flush()
 	}
 

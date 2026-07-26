@@ -5,10 +5,20 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"io/fs"
+	"log"
 	"net/http"
 	"os"
 	"strings"
 )
+
+// writeBody writes the response body and logs a write failure (e.g. the client
+// disconnected). The status line is already committed, so there is nothing to
+// recover beyond logging.
+func writeBody(w http.ResponseWriter, data []byte) {
+	if _, err := w.Write(data); err != nil {
+		log.Printf("web: write error: %v", err)
+	}
+}
 
 const baseURLPlaceholder = "https://finance.hermestech.uk"
 
@@ -63,7 +73,7 @@ func webHandler(content fs.FS) http.HandlerFunc {
 		if r.Method == http.MethodHead {
 			return
 		}
-		w.Write(data)
+		writeBody(w, data)
 	}
 }
 
@@ -88,7 +98,7 @@ func staticFileHandler(content fs.FS, filename, contentType, cacheControl string
 		if r.Method == http.MethodHead {
 			return
 		}
-		w.Write(data)
+		writeBody(w, data)
 	}
 }
 
@@ -109,6 +119,6 @@ func openAPIHandler(content fs.FS) http.HandlerFunc {
 		if r.Method == http.MethodHead {
 			return
 		}
-		w.Write(data)
+		writeBody(w, data)
 	}
 }

@@ -76,17 +76,3 @@ func atString(arr []any, idx int) string {
 	}
 	return fmt.Sprintf("%v", v)
 }
-
-func atStringSlice(arr []any, idx int) []string {
-	s := atSlice(arr, idx)
-	if s == nil {
-		return nil
-	}
-	result := make([]string, 0, len(s))
-	for _, v := range s {
-		if str, ok := v.(string); ok {
-			result = append(result, str)
-		}
-	}
-	return result
-}

@@ -58,7 +58,7 @@ func (c *Client) Execute(ctx context.Context, sourcePath string, requests []RPCR
 		log.Printf("gfrpc: execute error: %v", err)
 		return nil, fmt.Errorf("upstream service unavailable")
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("gfrpc: unexpected status %d for %s", resp.StatusCode, sourcePath)
