@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.3] - 2026-07-27
+
+### Changed
+- Upgraded Go to 1.25 and updated GitHub Actions
+- Synced openapi.json and llms.txt with live routes
+- Used strings.SplitSeq in matchETag
+
+### Fixed
+- Resolved gosec findings and pinned security scanner versions
+
 ## [1.1.2] - 2026-07-27
 
 ### Added
