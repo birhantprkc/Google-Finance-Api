@@ -15,8 +15,10 @@ import (
 )
 
 func main() {
+	// PORT is operator-controlled, but validate it is purely numeric so the
+	// value logged and bound is never tainted by unexpected input (CWE-117).
 	port := os.Getenv("PORT")
-	if port == "" {
+	if !isNumericPort(port) {
 		port = "8080"
 	}
 
@@ -26,7 +28,9 @@ func main() {
 	srv := api.NewServer(ctx, client, port, web.Content)
 
 	go func() {
-		log.Printf("server starting on :%s", port)
+		// port is validated numeric by isNumericPort above; gosec cannot follow
+		// the custom validator, so this is a verified false positive.
+		log.Printf("server starting on :%s", port) // #nosec G706
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("server error: %v", err)
 		}
@@ -45,4 +49,17 @@ func main() {
 		log.Fatalf("forced shutdown: %v", err)
 	}
 	log.Println("server stopped")
+}
+
+// isNumericPort reports whether s is a non-empty string of ASCII digits.
+func isNumericPort(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, c := range s {
+		if c < '0' || c > '9' {
+			return false
+		}
+	}
+	return true
 }

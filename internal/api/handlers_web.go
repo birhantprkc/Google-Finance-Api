@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"fmt"
+	"html"
 	"io/fs"
 	"log"
 	"net/http"
@@ -58,6 +59,9 @@ func webHandler(content fs.FS) http.HandlerFunc {
 			}
 			baseURL = scheme + "://" + r.Host
 		}
+		// baseURL is reflected into HTML (canonical/OG URLs). The Host header is
+		// client-controlled, so escape it to prevent reflected XSS.
+		baseURL = html.EscapeString(baseURL)
 		data := bytes.ReplaceAll(raw, []byte(baseURLPlaceholder), []byte(baseURL))
 		etag := contentETag(data)
 

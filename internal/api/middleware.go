@@ -1,17 +1,32 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
+
+// sanitizeLogField strips CR/LF and other control characters from a
+// client-controlled value so it cannot forge or split log lines (CWE-117).
+func sanitizeLogField(s string) string {
+	return strings.Map(func(r rune) rune {
+		if r < 0x20 || r == 0x7f {
+			return -1
+		}
+		return r
+	}, s)
+}
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		wrapped := &statusRecorder{ResponseWriter: w, statusCode: http.StatusOK}
 		next.ServeHTTP(wrapped, r)
-		log.Printf("%s %s %d %s", r.Method, r.URL.Path, wrapped.statusCode, time.Since(start).Round(time.Millisecond))
+		// Method and path are sanitized via sanitizeLogField above; gosec's taint
+		// analysis cannot follow custom sanitizers, so this is a verified false positive.
+		log.Printf("%s %s %d %s", sanitizeLogField(r.Method), sanitizeLogField(r.URL.Path), wrapped.statusCode, time.Since(start).Round(time.Millisecond)) // #nosec G706
 	})
 }
 
@@ -19,7 +34,7 @@ func recoveryMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Printf("panic: %v", err)
+				log.Printf("panic: %s", sanitizeLogField(fmt.Sprintf("%v", err)))
 				writeError(w, http.StatusInternalServerError, "internal server error")
 			}
 		}()
