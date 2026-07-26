@@ -20,6 +20,7 @@
 - GET /v1/market/earnings — Upcoming earnings calendar
 - GET /v1/market/headlines — Top finance headline
 - GET /v1/live — SSE real-time price stream (8 tickers, 15s interval)
+- GET /v1/live/snapshot — One-shot JSON array of current live quotes
 
 ## Ticker Formats
 

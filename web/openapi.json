@@ -3,7 +3,7 @@
   "info": {
     "title": "Google Finance API",
     "description": "Unofficial REST API wrapping Google Finance's internal RPC endpoint. Zero API key required.",
-    "version": "1.0.0",
+    "version": "1.1.2",
     "license": {
       "name": "MIT",
       "url": "https://github.com/KilimcininKorOglu/Google-Finance-Api/blob/main/LICENSE"
@@ -504,6 +504,31 @@
             "description": "SSE event stream",
             "content": {
               "text/event-stream": {}
+            }
+          }
+        }
+      }
+    },
+    "/v1/live/snapshot": {
+      "get": {
+        "summary": "Live price snapshot (JSON)",
+        "description": "One-shot JSON array of the current cached live quotes powering the SSE stream. Returns an empty array if the hub has no data yet.",
+        "operationId": "liveSnapshot",
+        "tags": [
+          "Live"
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of live quotes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
             }
           }
         }
