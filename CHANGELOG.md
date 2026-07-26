@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.2] - 2026-07-27
+
+### Added
+- Classification, analyst, and context endpoints for ticker-based data
+
+### Changed
+- Improved error handling on write paths and general code cleanup
+- Updated documentation for port configuration and endpoint tables
+
 ## [1.1.1] - 2026-06-25
 
 ### Added
