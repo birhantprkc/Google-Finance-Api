@@ -98,7 +98,13 @@ Live feed tracks 8 tickers: GOOGL, AAPL, MSFT, BTC-USD, THYAO:IST, USD-TRY, EUR-
 ```
 GET /healthz              Health check + version info
 GET /openapi.json         OpenAPI 3.1 specification
+GET /index.html.md        Markdown twin of the landing page (for LLMs)
+GET /llms.txt             llmstxt.org entry point
+GET /sitemap.xml          Crawlable page list
+GET /robots.txt           Crawler rules
 ```
+
+None of these five documents is a file. Each is rendered from the endpoint catalog per request, so they can never list an endpoint the server does not serve.
 
 ## Examples
 
@@ -223,15 +229,16 @@ internal/gfrpc/codec.go         batchexecute request/response codec
 internal/gfrpc/tuple.go         Ticker tuple conversion
 internal/gfrpc/methods.go       RPC method definitions
 internal/decode/                Positional array decoders
-internal/api/server.go          Route registration (Go 1.22+ method patterns)
+internal/api/server.go          Route registration (driven by the endpoint catalog)
+internal/api/docs.go            Endpoint catalog; llms.txt, index.html.md, sitemap.xml, robots.txt renderers
+internal/api/openapi.go         OpenAPI 3.1 specification renderer
 internal/api/handlers.go        Ticker-based handlers
 internal/api/handlers_market.go Market endpoint handlers
 internal/api/handlers_sse.go    SSE live price stream
-internal/api/handlers_web.go    Landing page and OpenAPI serving
+internal/api/handlers_web.go    Base URL resolution and document serving
 internal/api/middleware.go      CORS, logging, recovery
 internal/models/                Data models
 web/index.html                  Terminal-themed landing page
-web/openapi.json                OpenAPI 3.1 specification
 ```
 
 ## License

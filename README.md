@@ -98,7 +98,13 @@ Canlı akış 8 ticker izler: GOOGL, AAPL, MSFT, BTC-USD, THYAO:IST, USD-TRY, EU
 ```
 GET /healthz              Sağlık kontrolü + versiyon bilgisi
 GET /openapi.json         OpenAPI 3.1 spesifikasyonu
+GET /index.html.md        Ana sayfanın Markdown karşılığı (LLM'ler için)
+GET /llms.txt             llmstxt.org giriş noktası
+GET /sitemap.xml          Taranabilir sayfa listesi
+GET /robots.txt           Crawler kuralları
 ```
+
+Bu beş doküman dosya değildir. Her istekte endpoint kataloğundan üretilir, bu yüzden sunucunun servis etmediği bir endpoint'i asla listeleyemezler.
 
 ## Örnekler
 
@@ -206,15 +212,16 @@ internal/gfrpc/codec.go         batchexecute istek/yanıt kodlayıcı
 internal/gfrpc/tuple.go         Ticker tuple dönüştürme
 internal/gfrpc/methods.go       RPC metot tanımları
 internal/decode/                Pozisyonel dizi çözücüleri
-internal/api/server.go          Route tanımları (Go 1.22+ method patterns)
+internal/api/server.go          Route kaydı (endpoint kataloğu üzerinden)
+internal/api/docs.go            Endpoint kataloğu; llms.txt, index.html.md, sitemap.xml, robots.txt üreticileri
+internal/api/openapi.go         OpenAPI 3.1 spesifikasyon üreticisi
 internal/api/handlers.go        Ticker bazlı handler'lar
 internal/api/handlers_market.go Piyasa endpoint handler'ları
 internal/api/handlers_sse.go    SSE canlı fiyat akışı
-internal/api/handlers_web.go    Ana sayfa ve OpenAPI servisi
+internal/api/handlers_web.go    Base URL çözümleme ve doküman servisi
 internal/api/middleware.go      CORS, logging, recovery
 internal/models/                Veri modelleri
 web/index.html                  Terminal temalı ana sayfa
-web/openapi.json                OpenAPI 3.1 spesifikasyonu
 ```
 
 ## Lisans
