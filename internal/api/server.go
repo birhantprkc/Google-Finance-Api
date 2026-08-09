@@ -14,44 +14,37 @@ func NewServer(ctx context.Context, client *gfrpc.Client, port string, webFS fs.
 	hub := newLiveHub(client)
 	go hub.run(ctx)
 
-	h := &handlers{client: client, hub: hub}
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("GET /{$}", webHandler(webFS))
-	mux.HandleFunc("GET /openapi.json", openAPIHandler(webFS))
-	mux.HandleFunc("GET /robots.txt", staticFileHandler(webFS, "robots.txt", "text/plain; charset=utf-8", "public, max-age=3600"))
-	mux.HandleFunc("GET /sitemap.xml", staticFileHandler(webFS, "sitemap.xml", "application/xml; charset=utf-8", "public, max-age=3600"))
-	mux.HandleFunc("GET /llms.txt", staticFileHandler(webFS, "llms.txt", "text/plain; charset=utf-8", "public, max-age=3600"))
-	mux.HandleFunc("GET /favicon.svg", staticFileHandler(webFS, "favicon.svg", "image/svg+xml", "public, max-age=86400"))
-
-	mux.HandleFunc("GET /v1/quote/{ticker}", h.getQuote)
-	mux.HandleFunc("GET /v1/company/{ticker}", h.getCompany)
-	mux.HandleFunc("GET /v1/chart/{ticker}", h.getChart)
-	mux.HandleFunc("GET /v1/news/{ticker}", h.getNews)
-	mux.HandleFunc("GET /v1/financials/{ticker}", h.getFinancials)
-	mux.HandleFunc("GET /v1/related/{ticker}", h.getRelated)
-	mux.HandleFunc("GET /v1/classification/{ticker}", h.getClassification)
-	mux.HandleFunc("GET /v1/analyst/{ticker}", h.getAnalyst)
-	mux.HandleFunc("GET /v1/context/{ticker}", h.getContext)
-	mux.HandleFunc("GET /v1/full/{ticker}", h.getFull)
-
-	mux.HandleFunc("GET /v1/market/indices", h.getMarketIndices)
-	mux.HandleFunc("GET /v1/market/movers", h.getMarketMovers)
-	mux.HandleFunc("GET /v1/market/trending", h.getTrending)
-	mux.HandleFunc("GET /v1/market/earnings", h.getEarnings)
-	mux.HandleFunc("GET /v1/market/headlines", h.getHeadlines)
-
-	mux.HandleFunc("GET /v1/live", h.liveStream)
-	mux.HandleFunc("GET /v1/live/snapshot", h.sseQuotes)
-
 	version := "unknown"
 	if v, err := fs.ReadFile(webFS, "VERSION"); err == nil {
 		version = strings.TrimSpace(string(v))
 	}
 
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "version": version})
-	})
+	h := &handlers{client: client, hub: hub}
+	endpoints := apiEndpoints(h, version)
+
+	mux := http.NewServeMux()
+
+	// Routes come from the same catalog that renders openapi.json, llms.txt and
+	// index.html.md, so a documented endpoint is always a served endpoint.
+	for _, e := range endpoints {
+		mux.HandleFunc("GET "+e.Path, e.Handler)
+	}
+
+	mux.HandleFunc("GET /{$}", webHandler(webFS))
+	mux.HandleFunc("GET /index.html.md", generatedHandler(
+		"text/markdown; charset=utf-8", "public, max-age=3600",
+		func(baseURL string) []byte { return renderIndexMarkdown(baseURL, endpoints) }))
+	mux.HandleFunc("GET /llms.txt", generatedHandler(
+		"text/plain; charset=utf-8", "public, max-age=3600",
+		func(baseURL string) []byte { return renderLLMsTxt(baseURL, endpoints) }))
+	mux.HandleFunc("GET /openapi.json", generatedHandler(
+		"application/json; charset=utf-8", "public, max-age=3600",
+		func(baseURL string) []byte { return renderOpenAPI(baseURL, version, endpoints) }))
+	mux.HandleFunc("GET /sitemap.xml", generatedHandler(
+		"application/xml; charset=utf-8", "public, max-age=3600", renderSitemap))
+	mux.HandleFunc("GET /robots.txt", generatedHandler(
+		"text/plain; charset=utf-8", "public, max-age=3600", renderRobots))
+	mux.HandleFunc("GET /favicon.svg", staticFileHandler(webFS, "favicon.svg", "image/svg+xml", "public, max-age=86400"))
 
 	var handler http.Handler = mux
 	handler = loggingMiddleware(handler)
