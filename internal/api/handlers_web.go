@@ -50,6 +50,16 @@ func resolveBaseURL(r *http.Request, envBase string) string {
 	return scheme + "://" + r.Host
 }
 
+// setBaseURLVary declares that the body depends on X-Forwarded-Proto, which no
+// cache includes in its key. It is a no-op when BASE_URL is set, because the
+// base URL is then a constant and adding Vary would fragment the cache for
+// nothing. Host needs no Vary: it is already part of every cache key.
+func setBaseURLVary(w http.ResponseWriter, envBase string) {
+	if envBase == "" {
+		w.Header().Set("Vary", "X-Forwarded-Proto")
+	}
+}
+
 func contentETag(data []byte) string {
 	return fmt.Sprintf(`"%x"`, sha256.Sum256(data))
 }
@@ -100,6 +110,7 @@ func generatedHandler(contentType, cacheControl string, render func(baseURL stri
 	envBase := os.Getenv("BASE_URL")
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		setBaseURLVary(w, envBase)
 		serveContent(w, r, render(resolveBaseURL(r, envBase)), contentType, cacheControl)
 	}
 }
@@ -113,6 +124,8 @@ func webHandler(content fs.FS) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		baseURL := resolveBaseURL(r, envBase)
 		data := bytes.ReplaceAll(raw, []byte(baseURLPlaceholder), []byte(baseURL))
+
+		setBaseURLVary(w, envBase)
 
 		// Advertise both machine-readable twins for clients that never parse the
 		// HTML head, such as AI crawlers doing a HEAD request first.
