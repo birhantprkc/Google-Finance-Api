@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.4] - 2026-08-09
+
+### Added
+- Markdown twin of the landing page at /index.html.md, advertised from the page head and the Link header
+
+### Changed
+- Generated openapi.json, llms.txt, sitemap.xml and robots.txt from a single endpoint catalog instead of embedded files
+- Documented the generated documents in both READMEs
+
+### Fixed
+- Listed the missing /v1/live/snapshot endpoint on the landing page
+- Declared Vary: X-Forwarded-Proto on documents whose body depends on the forwarded scheme
+
 ## [1.1.3] - 2026-07-27
 
 ### Changed
